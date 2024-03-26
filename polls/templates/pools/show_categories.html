@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title%}<title>Категории</title>{% endblock%}
+{% block content%}
+
+<div class="container px-4 py-5" id="featured-3">
+    <h2 class="pb-2 border-bottom">Категории тестов</h2>
+    {% for list_categories in categories %}
+    <div class="bg-body-tertiary p-3 rounded">
+        <div class="feature col">
+            <h3 class="fs-2 text-body-emphasis">{{ list_categories.name }}</h3>
+            <p>Тут надо будет сделать описание</p>
+            <a href="{% url 'show_tests' list_categories.pk %}" role="button" class="btn  btn-primary">Список тестов по
+                данной категории
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock%}

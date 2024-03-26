@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title%}<title>Тестирование</title>{% endblock%}
+{% block content%}
+
+
+{% csrf_token %}
+<div class="container px-4 py-5" id="featured-3">
+    <h2 class="pb-2 border-bottom">{{ test.test_name }}</h2>
+<form method='POST' action=''>
+    {% csrf_token %}
+    {% for list_question in question %}
+    <div class="form-group">
+        <label>{{ list_question.question_name }}</label>
+    </div>
+    {% for list_answers in answers %}
+    {% if list_answers.question_id == list_question.id  %}
+    <div class="form-check">
+
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="{{ list_answers.pk }}" id="gridRadios">
+            <label class="form-check-label" for="gridRadios">
+                {{ list_answers}}
+            </label>
+        </div>
+
+    </div>
+    {% endif %}
+    {% endfor %}
+    {% endfor %}
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+
+
+
+{% endblock%}
