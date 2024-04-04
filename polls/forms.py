@@ -1,12 +1,25 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
+from .models import Result
+
 class RegistrationForm(UserCreationForm):
     username = forms.CharField(
         label='Логин пользователя',
         widget=forms.TextInput(attrs={'class': 'form-control', }),
         min_length=2,
     )
+    firstname = forms.CharField(
+        label='Имя пользователя',
+        widget=forms.TextInput(attrs={'class': 'form-control', }),
+        min_length=2,
+    )
+    lastname = forms.CharField(
+        label='Фамилия пользователя',
+        widget=forms.TextInput(attrs={'class': 'form-control', }),
+        min_length=2,
+    )
+
     email = forms.CharField(
         label='Электронная почта',
         widget=forms.EmailInput(attrs={'class': "form-control", }),
@@ -22,7 +35,7 @@ class RegistrationForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password1', 'password2']
+        fields = ['username', "firstname", 'email', 'password1', 'password2']
 
 
 class LoginForm(AuthenticationForm):
@@ -35,3 +48,10 @@ class LoginForm(AuthenticationForm):
         label='Ваш пароль',
         widget=forms.PasswordInput(attrs={'class': 'form-control', }),
     )
+
+class ResultForm(forms.ModelForm):
+    class Meta:
+        model = Result
+        fields = '__all__'
+
+

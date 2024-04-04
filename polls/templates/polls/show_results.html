@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title%}<title>Все результаты</title>{% endblock%}
+{% block content%}
+
+{% for list in results %}
+    {{ list.UserName }}
+    {{ list.Rating }}
+{% endfor %}
+
+{% endblock%}

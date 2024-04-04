@@ -23,8 +23,8 @@ urlpatterns = [
     path('show_categories/', show_categories, name='show_categories'),
     path('show_categories/<int:category_id>', show_tests, name='show_tests'),
     path('go_test/<int:test_id>', go_test, name='go_test'),
-    path('results_test/', results_test, name='results_test'),
+    path('show_results/', results_test, name='results_test'),
     path('registration/', user_registration, name='regis'),
     # path('login/', user_login, name='log_in'),
     path('logout/', user_logout, name='log_out'),
-]
+    ]

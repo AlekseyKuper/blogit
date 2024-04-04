@@ -1,11 +1,14 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import Tests, Categories, Questions, Answers
+from django.shortcuts import render, get_object_or_404, redirect, HttpResponseRedirect
+from .models import Tests, Categories, Questions, Answers, Result
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required, permission_required
-from .forms import RegistrationForm, LoginForm
+from .forms import RegistrationForm, LoginForm, ResultForm
+# from .serializers import ResultSerializer
+from rest_framework import generics
 
+from polls.api.serializers import ResultSerializer
 
 def index(request):
     if request.method == 'POST':
@@ -22,20 +25,20 @@ def index(request):
     else:
         form = LoginForm()
 
-    return render(request, 'pools/index.html', {'form': form})
-    # return render(request, 'pools/index.html')
+    return render(request, 'polls/index.html', {'form': form})
+    # return render(request, 'polls/index.html')
 
 # @permission_required('polls.show_categories')
 @login_required()
 def show_categories(request):
-    categories = Categories.objects.all()
+    categories = Categories.objects.filter(exist=True)
     context = {'categories': categories}
-    return render(request, context=context, template_name='pools/show_categories.html')
+    return render(request, context=context, template_name='polls/show_categories.html')
 
 def show_tests(request, category_id):
-    tests = Tests.objects.filter(category_id=category_id)
+    tests = Tests.objects.filter(category_id=category_id, exist=True)
     context = {'tests': tests}
-    return render(request, context=context, template_name='pools/show_tests.html')
+    return render(request, context=context, template_name='polls/show_tests.html')
 
 def go_test(request, test_id):
     if request.method == 'POST':
@@ -68,6 +71,11 @@ def go_test(request, test_id):
         res_a = a / 100
         res = round(t / res_a)
 
+        Result.objects.create(
+            UserName=request.user,
+            Rating=res
+        )
+
         context = {'r': r,
                    't': t,
                    'f': f,
@@ -75,7 +83,7 @@ def go_test(request, test_id):
                    'res': res,
                    'answers_list': answers_list}
 
-        return render(request, context=context, template_name='pools/results_polls.html')
+        return render(request, context=context, template_name='polls/results_polls.html')
     else:
         test = Tests.objects.get(pk=test_id)
 
@@ -84,13 +92,12 @@ def go_test(request, test_id):
 
         context = {'question': question, 'test': test, 'answers': answers}
 
-        return render(request, context=context, template_name='pools/go_test.html')
+        return render(request, context=context, template_name='polls/go_test.html')
 
 def results_test(request):
-    answers = Answers.objects.all()
-    context = {'answers': answers}
-
-    return render(request, context=context, template_name='pools/go_test.html')
+        results = Result.objects.all()
+        context = {'results': results}
+        return render(request, context=context, template_name='polls/show_results.html')
 
 def user_registration(request):
     if request.method == 'POST':
@@ -102,11 +109,16 @@ def user_registration(request):
     else:
         form = RegistrationForm()
 
-    return render(request, 'pools/auth/registration.html', {'form': form})
-
-# def user_login(request):
+    return render(request, 'polls/auth/registration.html', {'form': form})
 
 
 def user_logout(request):
     logout(request)
     return redirect('index')
+
+class ResultListView(generics.ListAPIView):
+ queryset = Result.objects.all()
+ serializer_class = ResultSerializer
+class ResultDetailView(generics.RetrieveAPIView):
+ queryset = Result.objects.all()
+ serializer_class = ResultSerializer
